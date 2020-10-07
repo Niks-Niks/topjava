@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapStorage implements Storage {
-
+public class MealStorageMap implements StorageMeal {
     private Map<Integer, Meal> mealMap = new HashMap<>();
 
     @Override
@@ -22,13 +21,13 @@ public class MapStorage implements Storage {
     }
 
     @Override
-    public void save(int key, Meal meal) {
-        mealMap.put(key, meal);
+    public Meal create(Meal meal) {
+        return mealMap.put(meal.getId(), meal);
     }
 
     @Override
-    public void update(int key, Meal meal) {
-        mealMap.put(key, meal);
+    public Meal update(Meal meal) {
+        return mealMap.replace(meal.getId(), meal);
     }
 
     @Override
