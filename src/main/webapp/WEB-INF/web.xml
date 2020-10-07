@@ -7,13 +7,17 @@
     <display-name>Topjava</display-name>
 
     <servlet>
-        <servlet-name>userServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.UserServlet</servlet-class>
+        <servlet-name>mealServlet</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealSerlvet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>userServlet</servlet-name>
-        <url-pattern>/users</url-pattern>
+        <servlet-name>mealServlet</servlet-name>
+        <url-pattern>/meals</url-pattern>
     </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>/list.jsp</welcome-file>
+    </welcome-file-list>
 
 </web-app>
