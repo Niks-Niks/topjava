@@ -23,7 +23,6 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal) {
-        log.info("1 - {}", meal);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealMapRepository.put(meal.getId(), meal);
@@ -32,11 +31,7 @@ public class InMemoryMealRepository implements MealRepository {
         }
         log.info("update meal {} in repository", meal);
         // handle case: update, but not present in storage
-        if (mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal) == null) {
-            return mealMapRepository.put(meal.getId(), meal);
-        } else {
-            return mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        }
+        return mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
