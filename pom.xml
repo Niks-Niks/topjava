@@ -47,14 +47,14 @@
             <version>2.5</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/jstl/jstl &ndash;&gt;-->
         <dependency>
             <groupId>jstl</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
 
-        <!-- Spring -->
+        <!--        &lt;!&ndash; Spring &ndash;&gt;-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -62,7 +62,7 @@
         </dependency>
 
 
-        <!-- Logging with SLF4J & LogBack -->
+        <!--        &lt;!&ndash; Logging with SLF4J & LogBack &ndash;&gt;-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
