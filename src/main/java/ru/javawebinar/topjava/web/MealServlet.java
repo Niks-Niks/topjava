@@ -45,10 +45,10 @@ public class MealServlet extends HttpServlet {
 
         log.info(meal.isNew() ? "doPost - create" : "doPost - update ", meal);
 
-        if (meal.getId() == null) {
+        if (meal.isNew()) {
             controller.create(meal);
         } else {
-            controller.update(meal, getId(request));
+            controller.update(meal);
         }
 
         response.sendRedirect("meals");
@@ -59,11 +59,10 @@ public class MealServlet extends HttpServlet {
         log.info("request doGet");
         String action = request.getParameter("action");
 
-
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("doGet - delete", id);
+                log.info("doGet - delete {}", id);
                 controller.delete(id);
                 response.sendRedirect("meals");
                 break;

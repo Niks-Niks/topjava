@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.user;
 
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository;
 import ru.javawebinar.topjava.service.UserService;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -10,8 +9,8 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 @Controller
 public class ProfileRestController extends AbstractUserController {
 
-    public ProfileRestController() {
-        super(new UserService(new InMemoryUserRepository()));
+    public ProfileRestController(UserService service) {
+        super(service);
     }
 
     public User get() {

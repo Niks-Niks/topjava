@@ -7,9 +7,12 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -23,7 +26,6 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal) {
-        log.info("1 - {}", meal);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealMapRepository.put(meal.getId(), meal);
@@ -32,42 +34,33 @@ public class InMemoryMealRepository implements MealRepository {
         }
         log.info("update meal {} in repository", meal);
         // handle case: update, but not present in storage
-        if (mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal) == null) {
-            return mealMapRepository.put(meal.getId(), meal);
-        } else {
-            return mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        }
+        return mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public boolean delete(int id) {
-        log.info("delete meal {} in repository", id);
-        return mealMapRepository.remove(id) != null;
+    public boolean delete(int mealId, int userId) {
+        log.info("delete meal - {} user - {} in repository", mealId, userId);
+        return isEqualsId(mealId, userId) && mealMapRepository.remove(mealId) != null;
     }
 
     @Override
-    public Meal get(int id) {
-        log.info("get meal {} in repository", id);
-        return mealMapRepository.get(id);
-    }
-
-    @Override
-    public Collection<Meal> getAll() {
-        log.info("getAllMeal in repository");
-        return mealMapRepository.values();
+    public Meal get(int mealId, int userId) {
+        log.info("get meal - {} user - {} in repository", mealId, userId);
+        return isEqualsId(mealId, userId) ? mealMapRepository.get(mealId) : null;
     }
 
     @Override
     public List<Meal> getMealsByUserId(int userId) {
-        List<Meal> listMealByUserId = new ArrayList<>();
-        for (Meal meals : mealMapRepository.values()) {
-            if (userId == meals.getUserId()) {
-                listMealByUserId.add(meals);
-            }
-        }
-        Collections.reverse(listMealByUserId);
-        log.info("getMealsByUserId {} in repository", listMealByUserId);
-        return listMealByUserId;
+        log.info("getMealsByUserId in repository");
+        return mealMapRepository.values()
+                .stream()
+                .filter(v -> v.getUserId().equals(userId))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
+    }
+
+    private boolean isEqualsId(int mealId, int userId) {
+        return mealMapRepository.get(mealId).getUserId().equals(userId);
     }
 }
 

@@ -6,22 +6,23 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
-    private final Map<Integer, User> UserRepository = new ConcurrentHashMap<>();
+    private final Map<Integer, User> userRepository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     @Override
     public boolean delete(int id) {
         log.info("delete user {} in UserRepository", id);
-        return UserRepository.remove(id) != null;
+        return userRepository.remove(id) != null;
     }
 
     @Override
@@ -29,32 +30,34 @@ public class InMemoryUserRepository implements UserRepository {
         log.info("save user {} in UserRepository", user);
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
-            UserRepository.put(user.getId(), user);
+            userRepository.put(user.getId(), user);
             return user;
         }
-        return UserRepository.computeIfPresent(user.getId(), (id, oldMeal) -> user);
+        return userRepository.computeIfPresent(user.getId(), (id, oldMeal) -> user);
     }
 
     @Override
     public User get(int id) {
         log.info("get user {} in UserRepository", id);
-        return UserRepository.get(id);
+        return userRepository.get(id);
     }
 
     @Override
     public List<User> getAll() {
         log.info("getAllUsers in UserRepository");
-        return new ArrayList<>(UserRepository.values());
+        return userRepository.values()
+                .stream()
+                .sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
     }
 
     @Override
     public User getByEmail(String email) {
         log.info("getUserByEmail {} in UserRepository", email);
-        for (User user : UserRepository.values()) {
-            if (email.equals(user.getEmail())) {
-                return UserRepository.get(user.getId());
-            }
-        }
-        return null;
+        return userRepository.values()
+                .stream()
+                .filter(v -> v.getEmail().equals(email))
+                .findAny()
+                .get();
     }
 }

@@ -26,7 +26,7 @@
         </thead>
         <c:forEach items="${meals}" var="meal">
             <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
-            <tr class="${meal.excess ? 'color:red' : 'color:green'}">
+            <tr style="${meal.excess ? 'color:red' : 'color:green'}">
                 <td>${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}</td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>

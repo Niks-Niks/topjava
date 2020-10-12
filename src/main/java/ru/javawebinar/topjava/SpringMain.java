@@ -11,9 +11,9 @@ public class SpringMain {
         // java 7 automatic resource management (ARM)
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+
             MealRestController meal = appCtx.getBean(MealRestController.class);
             meal.getMealsByUserId();
-
         }
     }
 }
