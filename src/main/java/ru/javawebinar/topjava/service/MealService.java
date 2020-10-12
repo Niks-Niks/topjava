@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.util.List;
 
@@ -19,24 +20,24 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal) {
-        return repository.save(meal);
+    public Meal create(Meal meal, int userId) {
+        return repository.save(meal, userId);
     }
 
     public void delete(int mealId, int userId) {
-        checkNotFoundWithId(repository.delete(mealId, userId), mealId, userId);
+        checkNotFoundWithId(repository.delete(mealId, userId), mealId);
     }
 
     public Meal get(int mealId, int userId) {
-        return checkNotFoundWithId(repository.get(mealId, userId), mealId, userId);
+        return checkNotFoundWithId(repository.get(mealId, userId), mealId);
     }
 
-    public List<Meal> getMealsByUserId(int userId) {
-        return checkNotFound(repository.getMealsByUserId(userId), "id=" + userId);
+    public List<MealTo> getByUserId(int userId) {
+        return checkNotFound(repository.getByUserId(userId), "id=" + userId);
     }
 
     public void update(Meal meal, int userId) {
-        checkNotFoundWithId(repository.save(meal), meal.getId());
+        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
 }

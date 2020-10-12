@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -17,8 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -38,7 +35,7 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                authUserId(),
+                null,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
@@ -48,9 +45,8 @@ public class MealServlet extends HttpServlet {
         if (meal.isNew()) {
             controller.create(meal);
         } else {
-            controller.update(meal);
+            controller.update(meal, meal.getId());
         }
-
         response.sendRedirect("meals");
     }
 
@@ -69,21 +65,23 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "update":
                 log.info("doGet - create || update");
-                final Meal meal = "create".equals(action) ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "new notation", 1000) : controller.get(getId(request));
+                final Meal meal = "create".equals(action)
+                        ? new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "new notation", 1000)
+                        : controller.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "all":
             default:
                 log.info("doGet - getAll");
-                request.setAttribute("meals", MealsUtil.getTos(controller.getMealsByUserId(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                request.setAttribute("meals", controller.getByUserId());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
     }
 
     private int getId(HttpServletRequest request) {
-        String paramId = Objects.requireNonNull(request.getParameter("id"));
-        return Integer.parseInt(paramId);
+        String id = Objects.requireNonNull(request.getParameter("id"));
+        return Integer.parseInt(id);
     }
 }

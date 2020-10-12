@@ -27,7 +27,7 @@ public class MealsUtil {
             new Meal(null, 5, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "2Ужин", 410)
     );
 
-    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> getTos(List<Meal> meals, int caloriesPerDay) {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
@@ -49,6 +49,6 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getUserId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }

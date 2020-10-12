@@ -13,7 +13,7 @@ public class SpringMain {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
 
             MealRestController meal = appCtx.getBean(MealRestController.class);
-            meal.getMealsByUserId();
+            meal.getByUserId();
         }
     }
 }
