@@ -5,17 +5,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -37,11 +37,7 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         log.info("update meal {} in repository", meal);
-        // handle case: update, but not present in storage
-        return isEqualsId(meal.getId(), userId) ? mealMapRepository.computeIfPresent(meal.getId(), (id, oldMeal) -> {
-            meal.setUserId(userId);
-            return meal;
-        }) : null;
+        return isEqualsId(meal.getId(), userId) ? mealMapRepository.replace(meal.getId(), meal) : null;
     }
 
     @Override
@@ -57,19 +53,24 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<MealTo> getByUserId(int userId) {
-        return MealsUtil.getTos(mealMapRepository.values()
-                .stream()
-                .filter(v -> {
-                    log.info("getMealsByUserId in repository-> {}", v);
-                    return v.getUserId().equals(userId);
-                })
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList()), authUserCaloriesPerDay());
+    public List<Meal> getByUserId(int userId) {
+        return getFilteredByPredicated(v -> v.getUserId().equals(userId));
+    }
+
+    @Override
+    public List<Meal> getFilterData(int userId, LocalDate startDate, LocalDate endDate) {
+        return getFilteredByPredicated(v -> DateTimeUtil.isBetweenHalfOpen(v.getDate(), startDate, !endDate.equals(LocalDate.MAX) ? endDate.plusDays(1) : endDate) && v.getUserId().equals(userId));
     }
 
     private boolean isEqualsId(int id, int userId) {
-        return mealMapRepository.get(id).getUserId().equals(userId);
+        return mealMapRepository.get(id) == null ? mealMapRepository.get(id).getUserId().equals(userId) : null;
+    }
+
+    private List<Meal> getFilteredByPredicated(Predicate<Meal> filter) {
+        return mealMapRepository.values()
+                .stream()
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime))
+                .collect(Collectors.toList());
     }
 }
-

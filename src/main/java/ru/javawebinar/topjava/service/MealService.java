@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -32,7 +32,7 @@ public class MealService {
         return checkNotFoundWithId(repository.get(mealId, userId), mealId);
     }
 
-    public List<MealTo> getByUserId(int userId) {
+    public List<Meal> getByUserId(int userId) {
         return checkNotFound(repository.getByUserId(userId), "id=" + userId);
     }
 
@@ -40,4 +40,7 @@ public class MealService {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 
+    public List<Meal> getFilterData(int userId, LocalDate startDate, LocalDate endDate) {
+        return checkNotFound(repository.getFilterData(userId, startDate, endDate), "id=" + userId);
+    }
 }

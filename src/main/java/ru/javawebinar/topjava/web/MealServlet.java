@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -27,6 +29,11 @@ public class MealServlet extends HttpServlet {
         super.init(config);
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         controller = appCtx.getBean(MealRestController.class);
+    }
+
+    @Override
+    public void destroy() {
+        appCtx.close();
     }
 
     @Override
@@ -71,6 +78,16 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
+            case "filter":
+                log.info("doGet - filter");
+
+                request.setAttribute("meals", controller.getFilterData(
+                        checkDate(request.getParameter("dateStart")) == null ? LocalDate.MAX : checkDate(request.getParameter("dateStart")),
+                        checkDate(request.getParameter("dateEnd")) == null ? LocalDate.MIN : checkDate(request.getParameter("dateEnd")),
+                        checkTime(request.getParameter("timeStart")) == null ? LocalTime.MAX : checkTime(request.getParameter("timeStart")),
+                        checkTime(request.getParameter("timeEnd")) == null ? LocalTime.MAX : checkTime(request.getParameter("timeEnd"))));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                break;
             case "all":
             default:
                 log.info("doGet - getAll");
@@ -78,6 +95,14 @@ public class MealServlet extends HttpServlet {
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
+    }
+
+    private LocalDate checkDate(String date) {
+        return date.isEmpty() ? null : LocalDate.parse(date);
+    }
+
+    private LocalTime checkTime(String time) {
+        return time.isEmpty() ? null : LocalTime.parse(time);
     }
 
     private int getId(HttpServletRequest request) {

@@ -18,16 +18,16 @@ public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
     public static final List<Meal> meals = Arrays.asList(
-            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "1Завтрак", 500),
-            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "1Обед", 1000),
-            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "1Ужин", 500),
-            new Meal(null, 2, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "2Еда на граничное значение", 100),
-            new Meal(null, 3, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "2Завтрак", 1000),
-            new Meal(null, 4, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "2Обед", 500),
-            new Meal(null, 5, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "2Ужин", 410)
+            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "1 Завтрак", 500),
+            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "1 Обед", 1000),
+            new Meal(null, 1, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "1 Ужин", 500),
+            new Meal(null, 2, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "2 Еда на граничное значение", 100),
+            new Meal(null, 2, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "2 Завтрак", 1000),
+            new Meal(null, 2, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "2 Обед", 500),
+            new Meal(null, 5, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "5 Ужин", 410)
     );
 
-    public static List<MealTo> getTos(List<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
