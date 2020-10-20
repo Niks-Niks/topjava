@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.MealTest;
+import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.MealTest.*;
+import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
@@ -91,26 +91,26 @@ public class MealServiceTest {
 
     @Test
     public void update() {
-        Meal updated = MealTest.getUpdated(MEAL_ADMIN_ID);
+        Meal updated = MealTestData.getUpdated(MEAL_ADMIN_ID);
         service.update(new Meal(updated), ADMIN_ID);
         assertMatch(service.get(MEAL_ADMIN_ID, ADMIN_ID), updated);
     }
 
     @Test
     public void updateNotBelong() {
-        Meal updated = MealTest.getUpdated(MEAL_ADMIN_ID);
+        Meal updated = MealTestData.getUpdated(MEAL_ADMIN_ID);
         assertThrows(NotFoundException.class, () -> service.update(updated, USER_ID));
     }
 
     @Test
     public void updateNotFound() {
-        Meal updated = MealTest.getUpdated(NOT_FOUND_MEAL_ID);
+        Meal updated = MealTestData.getUpdated(NOT_FOUND_MEAL_ID);
         assertThrows(NotFoundException.class, () -> service.update(updated, USER_ID));
     }
 
     @Test
     public void create() {
-        Meal newMeal = MealTest.getNew();
+        Meal newMeal = MealTestData.getNew();
         Meal created = service.create(new Meal(newMeal), ADMIN_ID);
         Integer newId = created.getId();
         newMeal.setId(newId);
