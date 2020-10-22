@@ -37,14 +37,11 @@ public class MealTestData {
     public static Meal getUpdated(int mealId) {
         Meal updated = new Meal(meal);
         updated.setId(mealId);
-        updated.setDescription("Обновлённая еда");
         return updated;
     }
 
     public static Meal getNew() {
-        Meal newMeal = new Meal(meal);
-        meal.setDescription("Новая еда");
-        return newMeal;
+        return new Meal(meal);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
