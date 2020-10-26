@@ -1,7 +1,11 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,6 +30,28 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+
+    @Rule
+    public ExternalResource ruleTime = new ExternalResource() {
+        private long timeStart;
+        private String testName;
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            testName = description.getMethodName();
+            return super.apply(base, description);
+        }
+
+        @Override
+        protected void before() throws Throwable {
+            timeStart = System.nanoTime();
+        }
+
+        @Override
+        protected void after() {
+            System.out.println("\nName tests -> " + testName + " - " + (System.nanoTime() - timeStart) + "\n");
+        }
+    };
 
     @Autowired
     private MealService service;
