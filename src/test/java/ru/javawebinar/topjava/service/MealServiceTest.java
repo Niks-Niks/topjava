@@ -1,17 +1,18 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExternalResource;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.JUnitTestTimeWatcher;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -31,27 +32,15 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+
     @Rule
-    public ExternalResource ruleTime = new ExternalResource() {
-        private long timeStart;
-        private String testName;
+    public JUnitTestTimeWatcher timeWatcher = new JUnitTestTimeWatcher();
 
-        @Override
-        public Statement apply(Statement base, Description description) {
-            testName = description.getMethodName();
-            return super.apply(base, description);
-        }
-
-        @Override
-        protected void before() throws Throwable {
-            timeStart = System.nanoTime();
-        }
-
-        @Override
-        protected void after() {
-            System.out.println("\nName tests -> " + testName + " - " + (System.nanoTime() - timeStart) + "\n");
-        }
-    };
+    @AfterClass
+    public static void getAllTime() {
+        log.info(JUnitTestTimeWatcher.result.toString());
+    }
 
     @Autowired
     private MealService service;
