@@ -11,8 +11,13 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class JdbcMealRepository implements MealRepository {
@@ -25,17 +30,26 @@ public class JdbcMealRepository implements MealRepository {
 
     private final SimpleJdbcInsert insertMeal;
 
-    public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    private final Validator validator;
+
+    public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, Validator validator) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
 
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.validator = validator;
     }
 
+    @Transactional
     @Override
     public Meal save(Meal meal, int userId) {
+        Set<ConstraintViolation<Meal>> violations = validator.validate(meal);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
@@ -57,11 +71,13 @@ public class JdbcMealRepository implements MealRepository {
         return meal;
     }
 
+    @Transactional
     @Override
     public boolean delete(int id, int userId) {
         return jdbcTemplate.update("DELETE FROM meals WHERE id=? AND user_id=?", id, userId) != 0;
     }
 
+    @Transactional
     @Override
     public Meal get(int id, int userId) {
         List<Meal> meals = jdbcTemplate.query(
@@ -69,12 +85,14 @@ public class JdbcMealRepository implements MealRepository {
         return DataAccessUtils.singleResult(meals);
     }
 
+    @Transactional
     @Override
     public List<Meal> getAll(int userId) {
         return jdbcTemplate.query(
                 "SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", ROW_MAPPER, userId);
     }
 
+    @Transactional
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return jdbcTemplate.query(
@@ -82,3 +100,5 @@ public class JdbcMealRepository implements MealRepository {
                 ROW_MAPPER, userId, startDateTime, endDateTime);
     }
 }
+
+

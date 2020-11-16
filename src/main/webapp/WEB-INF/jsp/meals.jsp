@@ -5,10 +5,11 @@
 
 <html>
 <head>
-    <title>Meal list</title>
+    <jsp:include page="fragments/headTag.jsp"/>
 </head>
 <body>
 <section>
+    <jsp:include page="fragments/bodyHeader.jsp"/>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
@@ -62,5 +63,6 @@
         </c:forEach>
     </table>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
