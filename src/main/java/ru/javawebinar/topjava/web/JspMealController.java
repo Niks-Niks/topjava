@@ -3,7 +3,11 @@ package ru.javawebinar.topjava.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -25,14 +29,14 @@ public class JspMealController {
 
     private int userId = SecurityUtil.authUserId();
 
-    @GetMapping("/meals")
-    public String getAllMeals(Model model) {
+    @GetMapping
+    public String meals(Model model) {
         model.addAttribute("meals", MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay()));
-        return "meals";
+        return "/meals";
     }
 
-    @GetMapping("/delete&{id}")
-    public String deleteMeal(@PathVariable("id") int id) {
+    @GetMapping("/delete")
+    public String delete(@RequestParam int id) {
         service.delete(id, userId);
         return "redirect:/meals";
     }
@@ -43,8 +47,8 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @GetMapping("/update&{id}")
-    public String update(@PathVariable("id") int id, Model model) {
+    @GetMapping("/update")
+    public String update(@RequestParam int id, Model model) {
         model.addAttribute("meal", service.get(id, userId));
         return "mealForm";
     }
@@ -61,9 +65,18 @@ public class JspMealController {
         return "meals";
     }
 
-    @PostMapping("/meals")
-    public String createUpdateMeal(@ModelAttribute("meal") Meal meal) {
-        service.create(meal, userId);
+    @PostMapping
+    public String save(HttpServletRequest request) {
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
+
+        if (!StringUtils.hasText(request.getParameter("id"))) {
+            service.create(meal, Integer.parseInt(request.getParameter("id")));
+        } else {
+            service.update(meal, Integer.parseInt(request.getParameter("id")));
+        }
         return "redirect:/meals";
     }
 }
