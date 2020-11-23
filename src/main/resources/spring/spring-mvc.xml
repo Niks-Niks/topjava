@@ -36,8 +36,8 @@
           class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <bean class="ru.javawebinar.topjava.util.LocalDateUtil"/>
-                <bean class="ru.javawebinar.topjava.util.LocalTimeUtil"/>
+                <bean class="ru.javawebinar.topjava.util.LocalDateConverter"/>
+                <bean class="ru.javawebinar.topjava.util.LocalTimeConverter"/>
             </set>
         </property>
     </bean>

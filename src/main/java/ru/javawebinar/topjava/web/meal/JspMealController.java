@@ -1,11 +1,11 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
-@RestController
+@Controller
 @RequestMapping(value = JspMealController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class JspMealController extends AbstractMealController {
     static final String URL = "/meals";
