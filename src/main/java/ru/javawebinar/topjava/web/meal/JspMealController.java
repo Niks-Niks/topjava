@@ -1,34 +1,25 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
-@RestController
-@RequestMapping(value = JspMealController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Controller
+@RequestMapping(value = "/meals")
 public class JspMealController extends AbstractMealController {
-    static final String URL = "/meals";
-
-    @GetMapping
-    public List<MealTo> getAll() {
-        return super.getAll();
-    }
 
     @GetMapping("/delete")
     public String delete(HttpServletRequest request) {
