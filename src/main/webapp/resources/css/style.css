@@ -32,9 +32,12 @@ html {
     position: relative;
     min-height: 100%;
 }
+
 body {
     margin-bottom: 60px; /* Margin bottom by footer height */
+    background-color: rgb(44, 47, 49);
 }
+
 .footer {
     position: absolute;
     bottom: 0;
@@ -42,4 +45,45 @@ body {
     height: 60px; /* Set the fixed height of the footer here */
     line-height: 60px; /* Vertically center the text there */
     background-color: #f5f5f5;
+}
+
+.filter-title {
+    text-align: center;
+    margin: 3px auto;
+}
+
+.filter-box {
+    padding: 1.2em;
+    border-radius: 9px;
+    border: slategrey solid 1px;
+}
+
+.filter-footer {
+    text-align: right;
+    margin-right: 5px;
+}
+
+form {
+    margin: auto;
+}
+
+form > dl {
+    display: inline-block;
+}
+
+form > dl > dt {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+form > dl > dt > dd {
+    display: block;
+}
+
+.addMeal {
+    text-align: center;
+}
+
+table, thead, tbody{
+    border: none;
 }

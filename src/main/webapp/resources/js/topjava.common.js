@@ -76,3 +76,7 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     }).show();
 }
+
+function clean() {
+    $('#filter')[0].reset();
+}
