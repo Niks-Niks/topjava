@@ -1,4 +1,4 @@
-var ctx;
+var ctx, ajaxUrl = "profile/meals/";
 
 function updateFilteredTable() {
     $.ajax({
@@ -15,13 +15,23 @@ function clearFilter() {
 
 $(function () {
     ctx = {
-        ajaxUrl: "profile/meals/",
+        ajaxUrl: ajaxUrl,
         datatableApi: $("#datatable").DataTable({
+            "ajax": {
+                "url": userAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render": function (date, type, row) {
+                        if (type === "display") {
+                            return date.substring(0, 19).replace("T", " ");
+                        }
+                        return date;
+                    }
                 },
                 {
                     "data": "description"
@@ -30,22 +40,31 @@ $(function () {
                     "data": "calories"
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderEditBtn
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "defaultContent": "",
+                    "orderable": false,
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
                 [
                     0,
-                    "desc"
+                    "asc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+                if (!data.enabled) {
+                    $(row).attr("data-mealExcess", data.excess);
+                }
+            }
         }),
-        updateTable: updateFilteredTable
+        updateTable: function () {
+            $.get(ajaxUrl, updateTableByData);
+        }
     };
     makeEditable();
 });
