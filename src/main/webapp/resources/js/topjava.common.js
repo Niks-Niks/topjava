@@ -2,12 +2,6 @@ var form;
 
 function makeEditable() {
     form = $('#detailsForm');
-    $(".delete").click(function () {
-        if (confirm('Are you sure?')) {
-            deleteRow($(this).attr("id"));
-        }
-    });
-
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
     });
@@ -22,19 +16,19 @@ function add() {
 }
 
 function deleteRow(id) {
-    $.ajax({
-        url: ctx.ajaxUrl + id,
-        type: "DELETE"
-    }).done(function () {
-        updateTable();
-        successNoty("Deleted");
-    });
+    if (confirm(i18n['common.confirm'])) {
+        $.ajax({
+            url: ctx.ajaxUrl + id,
+            type: "DELETE"
+        }).done(function () {
+            ctx.updateTable();
+            successNoty("common.deleted");
+        });
+    }
 }
 
-function updateTable() {
-    $.get(ctx.ajaxUrl, function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
-    });
+function updateTableByData(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
 }
 
 function save() {
@@ -44,8 +38,8 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
-        successNoty("Saved");
+        ctx.updateTable();
+        successNoty("common.saved");
     });
 }
 
