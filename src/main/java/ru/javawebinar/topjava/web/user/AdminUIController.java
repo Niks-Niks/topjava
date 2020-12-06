@@ -9,27 +9,36 @@ import ru.javawebinar.topjava.model.User;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping(value = "/admin/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminUIController extends AbstractUserController {
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<User> getAll() {
         return super.getAll();
     }
 
     @Override
     @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         super.delete(id);
     }
 
     @PostMapping
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void create(@RequestParam String name,
-                       @RequestParam String email,
-                       @RequestParam String password) {
-        super.create(new User(null, name, email, password, Role.USER));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
+        if (result.hasErrors()) {
+            String errorFieldsMsg = result.getFieldErrors().stream()
+                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                    .collect(Collectors.joining("<br>"));
+            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
+        }
+        if (userTo.isNew()) {
+            super.create(userTo);
+        } else {
+            super.update(userTo, userTo.id());
+        }
+        return ResponseEntity.ok().build();
     }
 }
